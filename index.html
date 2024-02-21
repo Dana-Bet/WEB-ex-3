@@ -1,70 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cryptocurrency Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="max-w-[1000px] mx-auto">
+      <div class="text-blue-600 text-center py-4">
+        <h1 class="font-bold text-3xl">Cryptocurrency Data</h1>
+      </div>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BTC/USD Prices</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+      <div id="app" class="mt-4">
+      </div>
+    </div>
+    <script>
+     
+     const createTable = (data) => {
+  const header = `
+  <tr class="text-left">
+    <th class="px-6 py-3 ">Symbol</th>
+    <th class="px-6 py-3 ">Name</th>
+    <th class="px-6 py-3 ">Description</th>
+  </tr>`;
 
-<body>
-  <div id="app" class="max-w-[1000px] mx-auto">
-    <h1 class="font-bold text-3xl text-center text-blue-600 my-4 p-2">
-      Cryptocurrency Data
-    </h1>
-  </div>
-
-  <script>
-    const row = (v, i) => {
-      // Simplified tr string without the image
-      return `<tr class="${i % 2 === 0 ? "bg-gray-100" : "bg-white"}">
-            <td class="p-2 align-top border-b border-gray-200"><img class="h-8 w-8" src="${v.image
-        }" alt="${v.name} logo"/></td>
-            <td class="p-2 align-top border-b border-gray-200">${v.symbol}</td>
-            <td class="p-2 align-top border-b border-gray-200">${v.name}</td>
-            <td class="p-2 align-top border-b border-gray-200">${v.summary}</td>
-            </tr>`;
-    };
-
-    const createTable = (data) => {
-      // Convert object of objects into an array of objects
-      const dataArray = Object.keys(data).map((key) => ({
-        ...data[key],
-        symbol: key,
-      }));
-
-      const tableHeaders = `
-    <tr class="bg-gray-200">
-      <th class="p-2 border-b border-t border-gray-200">Logo</th>
-      <th class="p-2 border-b border-t border-gray-200">ID</th>
-      <th class="p-2 border-b border-t border-gray-200">Name</th>
-      <th class="p-2 border-b border-t border-gray-200">Summary</th>
+  const tableRows = Object.entries(data).map(([symbol, details]) => {
+    return `
+    <tr class="border-b">
+      <td class="px-6 py-3 whitespace-nowrap">
+        <div class="flex items-center">
+          <img class="h-6 w-6 rounded-full mr-2" src="${details.image}" alt="${symbol}">
+          <span class="font-medium ">${symbol}</span>
+        </div>
+      </td>
+      <td class="px-6 py-3 whitespace-nowrap ">${details.name}</td>
+      <td class="px-6 py-3 whitespace-nowrap ">${details.summary || 'No summary available'}</td>
     </tr>`;
+  }).join('');
 
-      // Use map function to create row for each item
-      const tableRows = dataArray
-        .map((item, index) => row(item, index))
-        .join("");
+  const tableHtml = `
+  <div class="overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left ">
+      <thead class="text-xs text-gray-700 uppercase">
+        ${header}
+      </thead>
+      <tbody>
+        ${tableRows}
+      </tbody>
+    </table>
+  </div>`;
 
-      // Combine headers and rows to form table
-      const table = `<table class="min-w-full border-collapse">${tableHeaders}${tableRows}</table>`;
+  document.getElementById("app").innerHTML = tableHtml;
+};
+      
 
-      // Create a container for the table
-      const tableContainer = document.createElement("div");
-      tableContainer.innerHTML = table;
-
-      // Append the table after the h1 element
-      const appDiv = document.getElementById("app");
-      appDiv.appendChild(tableContainer);
-    };
-
-    const url = "https://api.mtw-testnet.com/assets/all";
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => createTable(data))
-      .catch((err) => console.log(err));
-  </script>
-</body>
-
+const url = "https://api.mtw-testnet.com/assets/all";
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+          createTable(data);
+        })
+        .catch((err) => console.log("Error fetching data: ", err));
+    </script>
+    <script src="https://morethanwallet.com/appstore/index.js"></script>
+  </body>
 </html>
